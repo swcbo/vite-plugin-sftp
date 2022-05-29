@@ -1,0 +1,12 @@
+src
+.git
+.DS_Store
+node_modules
+.eslintrc
+.gitignore
+.prettierrc
+jest.config.js
+yarn-error.log
+rollup.config.js
+*.tgz
+tsconfig.json

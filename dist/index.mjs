@@ -1,35 +1,22 @@
-/*
- * @Author: swcbo
- * @Date: 2022-05-10 11:59:41
- * @LastEditors: swcbo
- * @LastEditTime: 2022-05-29 21:58:46
- * @FilePath: /vite-plugin-sftp/src/index.ts
- * @Description: sftp
- */
-import type { Plugin } from 'vite';
 import fs from 'fs';
 import chalk from 'chalk';
-import SftpClient, { ConnectOptions } from 'ssh2-sftp-client';
+import SftpClient from 'ssh2-sftp-client';
+
 const sftp = new SftpClient();
-export interface SftpPluginConfig extends ConnectOptions {
-  remotePath: string;
-  path: string;
-  oldRemotePath?: string;
-}
 const vitePluginSftp = ({
   path,
   remotePath,
   oldRemotePath,
   ...data
-}: SftpPluginConfig): Plugin => {
+}) => {
   return {
-    name: 'vite-plugin-sftp',
-    enforce: 'post',
+    name: "vite-plugin-sftp",
+    enforce: "post",
     async closeBundle() {
-      console.log('🚀deploy start');
+      console.log("\u{1F680}deploy start");
       const isExist = await fs.existsSync(path);
       if (!isExist) {
-        console.error(chalk.red(`deploy failure: ${path} not exist ❌`));
+        console.error(chalk.red(`deploy failure: ${path} not exist \u274C`));
         return;
       }
       try {
@@ -39,7 +26,8 @@ const vitePluginSftp = ({
             console.log(chalk.blue(`deploy remove ${oldRemotePath}`));
             try {
               await sftp.rmdir(`${oldRemotePath}`, true);
-            } catch (error) {}
+            } catch (error) {
+            }
           }
           if (await sftp.exists(remotePath)) {
             console.log(chalk.blue(`deploy rename ${remotePath} to ${oldRemotePath}`));
@@ -49,17 +37,17 @@ const vitePluginSftp = ({
         console.log(chalk.blue(`deploy uploadDir ${path} to ${remotePath}`));
         await sftp.uploadDir(path, remotePath);
         await sftp.end();
-        console.log(chalk.green('deploy success✅'));
+        console.log(chalk.green("deploy success\u2705"));
       } catch (err) {
-        console.error(chalk.red(`deploy failure: ${err}❌`));
+        console.error(chalk.red(`deploy failure: ${err}\u274C`));
         if (oldRemotePath) {
           console.log(chalk.red(`deploy rename ${oldRemotePath} to  ${remotePath}`));
           await sftp.rename(`${oldRemotePath}`, remotePath);
         }
-
         sftp.end();
       }
-    },
+    }
   };
 };
-export default vitePluginSftp;
+
+export { vitePluginSftp as default };
