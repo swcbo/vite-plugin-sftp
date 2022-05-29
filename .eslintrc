@@ -9,6 +9,6 @@
       }
     ],
     "indent": ["error", 2],
-    "array-bracket-spacing": false
+    "array-bracket-spacing": 0
   }
 }
